@@ -1,0 +1,9 @@
+com\app\config\DatabaseConfig.class
+com\app\model\Carro.class
+com\app\repository\interfaces\IMotoRepository.class
+com\app\controller\MotoController.class
+com\app\service\MotoService.class
+com\app\App.class
+com\app\repository\MotoRepository.class
+com\app\model\Moto.class
+com\app\model\Veiculo.class
