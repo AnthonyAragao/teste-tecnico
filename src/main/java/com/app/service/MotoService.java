@@ -17,4 +17,14 @@ public class MotoService
     {
         return repository.findAll();
     }
+
+    public Moto findById(int id) 
+    {
+        return repository.findById(id);
+    }
+
+    public void insert(Moto moto) 
+    {
+        repository.insert(moto);
+    }
 }

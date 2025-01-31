@@ -2,15 +2,14 @@ package com.app.model;
 
 public abstract class Veiculo 
 {
-    protected int id;
-    protected String tipo;
-    protected String modelo;
-    protected String fabricante;
-    protected int ano;
-    protected double preco;
+    private Integer id;
+    private String tipo;
+    private String modelo;
+    private String fabricante;
+    private int ano;
+    private double preco;
 
-    public Veiculo(int id, String tipo, String modelo,  String fabricante, int ano, double preco){
-        this.id = id;
+    public Veiculo(String tipo, String modelo,  String fabricante, int ano, double preco){
         this.tipo = tipo;
         this.modelo = modelo;
         this.fabricante = fabricante;
@@ -18,9 +17,14 @@ public abstract class Veiculo
         this.preco = preco;
     }
 
-    public int getId() 
+    public Integer getId() 
     {
         return id;
+    }
+
+    public void setId(Integer id) 
+    { 
+        this.id = id; 
     }
 
     public String getTipo() 
@@ -47,6 +51,7 @@ public abstract class Veiculo
     {
         return preco;
     }
+
 
     @Override
     public String toString() 

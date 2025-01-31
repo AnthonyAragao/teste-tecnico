@@ -2,19 +2,30 @@ package com.app.controller;
 
 import java.util.List;
 import com.app.model.Moto;
+import com.app.repository.MotoRepository;
 import com.app.service.MotoService;
 
 public class MotoController
 {
-    private MotoService service;
+    private final MotoService motoService;
 
-    public MotoController(MotoService service) 
+    public MotoController() 
     {
-        this.service = service;
+        this.motoService = new MotoService(new MotoRepository());
     }
 
-    public List<Moto> findAll() 
+    public List<Moto> index() 
     {
-        return service.findAll();
+        return motoService.findAll();
+    }
+
+    public Moto show(int id) 
+    {
+        return motoService.findById(id);
+    }
+
+    public void create(Moto moto) 
+    {
+        motoService.insert(moto);
     }
 }
