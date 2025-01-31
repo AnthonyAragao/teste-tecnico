@@ -13,8 +13,10 @@ public class App
 
         // controller.findAll().forEach(System.out::println);
         // System.out.println(repository.findById(1));
-        Moto moto = new Moto("MOTO" , "XRE 190", "Honda", 2025, 30000.0, 190);
-        repository.insert(moto);
+        // Moto moto = new Moto("MOTO" , "XRE 190", "Honda", 2025, 30000.0, 190);
+        // repository.insert(moto);
+        controller.delete(9);
+
         controller.index().forEach(System.out::println);
     }
 }

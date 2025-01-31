@@ -27,4 +27,14 @@ public class MotoService
     {
         repository.insert(moto);
     }
+
+    public void update(Moto moto) 
+    {
+        repository.update(moto);
+    }
+
+    public void delete(int id) 
+    {
+        repository.delete(id);
+    }
 }

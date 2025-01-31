@@ -10,5 +10,5 @@ public interface IMotoRepository
     public Moto findById(int id);
     public void insert(Moto veiculo);
     public void update(Moto veiculo);
-    public void delete(Moto veiculo);
+    public void delete(int id);
 }

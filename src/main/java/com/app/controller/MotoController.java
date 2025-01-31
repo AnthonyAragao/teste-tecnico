@@ -28,4 +28,14 @@ public class MotoController
     {
         motoService.insert(moto);
     }
+
+    public void update(Moto moto) 
+    {
+        motoService.update(moto);
+    }
+
+    public void delete(int id) 
+    {
+        motoService.delete(id);
+    }
 }

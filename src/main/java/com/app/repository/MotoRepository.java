@@ -54,7 +54,7 @@ public class MotoRepository implements IMotoRepository
                 }
             }
         } catch (SQLException exception) {
-            throw new RuntimeException("Error fetching moto with ID: " + id, exception);
+            throw new RuntimeException("Erro ao buscar moto com ID: " + id, exception);
         }
 
         return moto;
@@ -105,12 +105,49 @@ public class MotoRepository implements IMotoRepository
     }
 
     @Override
-    public void update(Moto veiculo) 
+    public void update(Moto moto) 
     {}
 
     @Override
-    public void delete(Moto veiculo) 
-    {}
+    public void delete(int id) 
+    {
+        String sqlDeleteMoto = "DELETE FROM motos WHERE id = ?";
+        String sqlDeleteVeiculo = "DELETE FROM veiculos WHERE id = ?";
+
+        try (Connection conn = DatabaseConfig.getConnection()) {
+            conn.setAutoCommit(false);
+
+            try (
+                PreparedStatement stmtMoto = conn.prepareStatement(sqlDeleteMoto);
+                PreparedStatement stmtVeiculo = conn.prepareStatement(sqlDeleteVeiculo)
+            ) {
+                int veiculoId;
+                try (PreparedStatement stmtGetVeiculoId = conn.prepareStatement("SELECT veiculo_id FROM motos WHERE id = ?")) {
+                    stmtGetVeiculoId.setInt(1, id);
+                    try (ResultSet rs = stmtGetVeiculoId.executeQuery()) {
+                        if (rs.next()) {
+                            veiculoId = rs.getInt("veiculo_id");
+                        } else {
+                            throw new RuntimeException("Moto not found with ID: " + id);
+                        }
+                    }
+                }
+                stmtMoto.setInt(1, id);
+                stmtMoto.executeUpdate();
+
+                stmtVeiculo.setInt(1, veiculoId);
+                stmtVeiculo.executeUpdate();
+
+                conn.commit();
+            } catch (SQLException exception) {
+                conn.rollback();
+                throw new RuntimeException("Erro ao deletar moto", exception);
+            }
+        } catch (SQLException exception) {
+            throw new RuntimeException("Erro ao deletar moto", exception);
+        }
+    }
+
 
     private Moto mapResultSetToMoto(ResultSet resultSet) throws SQLException 
     {
