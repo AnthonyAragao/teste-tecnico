@@ -121,11 +121,11 @@ public class MotoRepository implements IMotoRepository
                 veiculoStmt.setString(2, moto.getFabricante());
                 veiculoStmt.setInt(3, moto.getAno());
                 veiculoStmt.setDouble(4, moto.getPreco());
-                veiculoStmt.setInt(5, moto.getVeiculoId());
+                veiculoStmt.setInt(5, moto.getId());
                 veiculoStmt.executeUpdate();
 
                 motoStmt.setInt(1, moto.getCilindrada());
-                motoStmt.setInt(2, moto.getVeiculoId());
+                motoStmt.setInt(2, moto.getId());
                 motoStmt.executeUpdate();
 
                 conn.commit();
@@ -189,8 +189,7 @@ public class MotoRepository implements IMotoRepository
             resultSet.getDouble("preco"),
             resultSet.getInt("cilindrada")
         );
-        moto.setId(resultSet.getInt("id"));
-        moto.setVeiculoId(resultSet.getInt("veiculo_id"));
+        moto.setId(resultSet.getInt("veiculo_id"));
         return moto;
     }
 }

@@ -119,12 +119,12 @@ public class CarroRepository implements ICarroRepository
                 veiculoStmt.setString(2, carro.getFabricante());
                 veiculoStmt.setInt(3, carro.getAno());
                 veiculoStmt.setDouble(4, carro.getPreco());
-                veiculoStmt.setInt(5, carro.getVeiculoId());
+                veiculoStmt.setInt(5, carro.getId());
                 veiculoStmt.executeUpdate();
 
                 carroStmt.setInt(1, carro.getQuantidadePortas());
                 carroStmt.setString(2, carro.getTipoCombustivel());
-                carroStmt.setInt(3, carro.getVeiculoId());
+                carroStmt.setInt(3, carro.getId());
                 carroStmt.executeUpdate();
 
                 conn.commit();
@@ -188,8 +188,7 @@ public class CarroRepository implements ICarroRepository
             resultSet.getInt("quantidade_portas"),
             resultSet.getString("tipo_combustivel")
         );
-        carro.setId(resultSet.getInt("id"));
-        carro.setVeiculoId(resultSet.getInt("veiculo_id"));
+        carro.setId(resultSet.getInt("veiculo_id"));
         return carro;
     }
 }

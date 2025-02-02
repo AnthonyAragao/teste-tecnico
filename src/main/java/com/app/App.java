@@ -29,7 +29,7 @@ public class App
         Carro carro = carroRepository.findById(2);
         carro.setPreco(55000.0);
         carro.setAno(2025);
-        carro.setPreco(60000.0);
+        carro.setPreco(70000.0);
         carro.setTipoCombustivel("Flex");
         carroRepository.update(carro);
         // carroRepository.delete(1);
