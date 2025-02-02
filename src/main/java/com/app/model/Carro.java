@@ -3,9 +3,9 @@ package com.app.model;
 public class Carro extends Veiculo
 {
     private int quantidadePortas;
-    private String tipoCombustivel;
+    private TipoCombustivel tipoCombustivel;
 
-    public Carro(String tipo, String modelo, String fabricante, int ano,  double preco, int quantidadePortas, String tipoCombustivel){
+    public Carro(String tipo, String modelo, String fabricante, int ano,  double preco, int quantidadePortas, TipoCombustivel tipoCombustivel){
         super(tipo, modelo, fabricante, ano, preco);
         this.quantidadePortas = quantidadePortas;
         this.tipoCombustivel = tipoCombustivel;
@@ -21,12 +21,12 @@ public class Carro extends Veiculo
         this.quantidadePortas = quantidadePortas;
     }
 
-    public String getTipoCombustivel() 
+    public TipoCombustivel getTipoCombustivel() 
     {
         return tipoCombustivel;
     }
 
-    public void setTipoCombustivel(String tipoCombustivel) 
+    public void setTipoCombustivel(TipoCombustivel tipoCombustivel) 
     {
         this.tipoCombustivel = tipoCombustivel;
     }

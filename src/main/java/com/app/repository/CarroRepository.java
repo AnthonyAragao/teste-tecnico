@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import com.app.model.Carro;
+import com.app.model.TipoCombustivel;
 import com.app.config.DatabaseConfig;
 import com.app.repository.interfaces.ICarroRepository;
 
@@ -88,7 +89,7 @@ public class CarroRepository implements ICarroRepository
                     int veiculoId = generatedKeys.getInt(1);
                     carroStmt.setInt(1, veiculoId);
                     carroStmt.setInt(2, carro.getQuantidadePortas());
-                    carroStmt.setString(3, carro.getTipoCombustivel());
+                    carroStmt.setString(3, carro.getTipoCombustivel().name());
                     carroStmt.executeUpdate();
                 }
     
@@ -123,7 +124,8 @@ public class CarroRepository implements ICarroRepository
                 veiculoStmt.executeUpdate();
 
                 carroStmt.setInt(1, carro.getQuantidadePortas());
-                carroStmt.setString(2, carro.getTipoCombustivel());
+                carroStmt.setString(2, carro.getTipoCombustivel().name());
+
                 carroStmt.setInt(3, carro.getId());
                 carroStmt.executeUpdate();
 
@@ -186,7 +188,8 @@ public class CarroRepository implements ICarroRepository
             resultSet.getInt("ano"),
             resultSet.getDouble("preco"),
             resultSet.getInt("quantidade_portas"),
-            resultSet.getString("tipo_combustivel")
+            TipoCombustivel.valueOf(resultSet.getString("tipo_combustivel").toUpperCase())
+
         );
         carro.setId(resultSet.getInt("veiculo_id"));
         return carro;
