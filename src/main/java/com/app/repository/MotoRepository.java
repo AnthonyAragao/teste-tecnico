@@ -106,7 +106,37 @@ public class MotoRepository implements IMotoRepository
 
     @Override
     public void update(Moto moto) 
-    {}
+    {
+        String veiculoSql = "UPDATE veiculos SET modelo = ?, fabricante = ?, ano = ?, preco = ? WHERE id = ?";
+        String motoSql = "UPDATE motos SET cilindrada = ? WHERE veiculo_id = ?";
+
+        try (Connection conn = DatabaseConfig.getConnection()) {
+            conn.setAutoCommit(false); 
+
+            try (
+                PreparedStatement veiculoStmt = conn.prepareStatement(veiculoSql);
+                PreparedStatement motoStmt = conn.prepareStatement(motoSql)
+            ) {
+                veiculoStmt.setString(1, moto.getModelo());
+                veiculoStmt.setString(2, moto.getFabricante());
+                veiculoStmt.setInt(3, moto.getAno());
+                veiculoStmt.setDouble(4, moto.getPreco());
+                veiculoStmt.setInt(5, moto.getVeiculoId());
+                veiculoStmt.executeUpdate();
+
+                motoStmt.setInt(1, moto.getCilindrada());
+                motoStmt.setInt(2, moto.getVeiculoId());
+                motoStmt.executeUpdate();
+
+                conn.commit();
+            } catch (SQLException exception) {
+                conn.rollback();
+                throw new RuntimeException("Erro ao atualizar moto", exception);
+            }
+        } catch (SQLException exception) {
+            throw new RuntimeException("Erro ao atualizar moto", exception);
+        }
+    }
 
     @Override
     public void delete(int id) 
@@ -160,6 +190,7 @@ public class MotoRepository implements IMotoRepository
             resultSet.getInt("cilindrada")
         );
         moto.setId(resultSet.getInt("id"));
+        moto.setVeiculoId(resultSet.getInt("veiculo_id"));
         return moto;
     }
 }

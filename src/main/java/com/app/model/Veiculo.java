@@ -17,14 +17,10 @@ public abstract class Veiculo
         this.preco = preco;
     }
 
+    // Getters
     public Integer getId() 
     {
         return id;
-    }
-
-    public void setId(Integer id) 
-    { 
-        this.id = id; 
     }
 
     public String getTipo() 
@@ -50,6 +46,32 @@ public abstract class Veiculo
     public double getPreco() 
     {
         return preco;
+    }
+
+    // Setters
+    public void setId(Integer id) 
+    { 
+        this.id = id; 
+    }
+
+    public void setModelo(String modelo) 
+    {
+        this.modelo = modelo;
+    }
+
+    public void setFabricante(String fabricante) 
+    {
+        this.fabricante = fabricante;
+    }
+
+    public void setAno(int ano) 
+    {
+        this.ano = ano;
+    }
+
+    public void setPreco(double preco) 
+    {
+        this.preco = preco;
     }
 
 

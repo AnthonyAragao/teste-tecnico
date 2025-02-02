@@ -15,8 +15,8 @@ CREATE TABLE carros (
     FOREIGN KEY (veiculo_id) REFERENCES veiculos(id)
 );
 
-CREATE TABLE AUTO_INCREMENT motos (
-    id INT PRIMARY KEY,
+CREATE TABLE motos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
     cilindrada INT NOT NULL,
     veiculo_id INT,
     FOREIGN KEY (veiculo_id) REFERENCES veiculos(id)

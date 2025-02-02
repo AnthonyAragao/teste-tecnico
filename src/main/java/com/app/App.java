@@ -10,12 +10,15 @@ public class App
         MotoRepository repository = new MotoRepository();
         MotoController controller = new MotoController();
 
-
-        // controller.findAll().forEach(System.out::println);
-        // System.out.println(repository.findById(1));
-        // Moto moto = new Moto("MOTO" , "XRE 190", "Honda", 2025, 30000.0, 190);
+        // Moto moto = new Moto("MOTO", "XRE 190", "Honda", 2025, 30000.0, 190);
         // repository.insert(moto);
-        controller.delete(9);
+        Moto moto = repository.findById(2);
+
+        moto.setModelo("XRE 300");
+        moto.setAno(2023);
+        moto.setPreco(35000.0);
+        moto.setCilindrada(300);
+        repository.update(moto);
 
         controller.index().forEach(System.out::println);
     }
