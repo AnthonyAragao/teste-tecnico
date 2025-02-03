@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão de Veículos</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Gestão de Veículos</h1>
+
+        <!-- Seção para gerenciar Motos -->
+        <div id="moto-section">
+            <h2>Motos</h2>
+            <div id="moto-form-container">
+                <h3 id="moto-form-title">Adicionar Moto</h3>
+                <form id="moto-form">
+                    <input type="text" id="moto-make" placeholder="Marca" required>
+                    <input type="text" id="moto-model" placeholder="Modelo" required>
+                    <input type="number" id="moto-year" placeholder="Ano" required>
+                    <button type="submit">Salvar Moto</button>
+                </form>
+            </div>
+            <ul id="moto-list"></ul>
+        </div>
+
+        <!-- Seção para gerenciar Carros -->
+        <div id="car-section">
+            <h2>Carros</h2>
+            <div id="car-form-container">
+                <h3 id="car-form-title">Adicionar Carro</h3>
+                <form id="car-form">
+                    <input type="text" id="car-make" placeholder="Marca" required>
+                    <input type="text" id="car-model" placeholder="Modelo" required>
+                    <input type="number" id="car-year" placeholder="Ano" required>
+                    <button type="submit">Salvar Carro</button>
+                </form>
+            </div>
+            <ul id="car-list"></ul>
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
