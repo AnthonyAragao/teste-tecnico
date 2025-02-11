@@ -7,5 +7,4 @@ public class CarroHandler extends GenericHandler<Carro> {
     public CarroHandler(CarroController carroController) {
         super(carroController, Carro.class);
     }
-
 }

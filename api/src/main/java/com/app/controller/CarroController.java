@@ -6,7 +6,8 @@ import com.app.model.Carro;
 import com.app.repository.CarroRepository;
 import com.app.service.CarroService;
 
-public class CarroController implements GenericController<Carro> {
+public class CarroController implements GenericController<Carro> 
+{
     private final CarroService carroService;
 
     public CarroController() {
@@ -32,5 +33,4 @@ public class CarroController implements GenericController<Carro> {
     public void delete(int id) {
         carroService.delete(id);
     }
-
 }

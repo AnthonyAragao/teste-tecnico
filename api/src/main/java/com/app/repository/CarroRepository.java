@@ -189,7 +189,6 @@ public class CarroRepository implements ICarroRepository
             resultSet.getDouble("preco"),
             resultSet.getInt("quantidade_portas"),
             TipoCombustivel.valueOf(resultSet.getString("tipo_combustivel").toUpperCase())
-
         );
         carro.setId(resultSet.getInt("veiculo_id"));
         return carro;

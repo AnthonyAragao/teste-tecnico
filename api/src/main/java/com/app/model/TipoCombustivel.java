@@ -1,5 +1,6 @@
 package com.app.model;
 
-public enum TipoCombustivel {
+public enum TipoCombustivel 
+{
     GASOLINA, ETANOL, DIESEL, FLEX;
 }

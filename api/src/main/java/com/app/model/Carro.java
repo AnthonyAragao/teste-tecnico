@@ -5,8 +5,7 @@ public class Carro extends Veiculo
     private int quantidadePortas;
     private TipoCombustivel tipoCombustivel;
 
-    public Carro()
-    {
+    public Carro(){
         super();
     }
 

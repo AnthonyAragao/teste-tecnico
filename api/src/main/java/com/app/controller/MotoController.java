@@ -5,7 +5,8 @@ import com.app.model.Moto;
 import com.app.repository.MotoRepository;
 import com.app.service.MotoService;
 
-public class MotoController implements GenericController<Moto> {
+public class MotoController implements GenericController<Moto> 
+{
     private final MotoService motoService;
 
     public MotoController() {

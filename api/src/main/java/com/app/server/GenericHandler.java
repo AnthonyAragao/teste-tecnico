@@ -21,7 +21,8 @@ public class GenericHandler<T> implements HttpHandler {
     }
 
     @Override
-    public void handle(HttpExchange exchange) throws IOException {
+    public void handle(HttpExchange exchange) throws IOException 
+    {
         String metodo = exchange.getRequestMethod();
         String path = exchange.getRequestURI().getPath();
         String resposta = "";
@@ -44,33 +45,44 @@ public class GenericHandler<T> implements HttpHandler {
                     resposta = "Método não permitido";
                     exchange.sendResponseHeaders(405, resposta.length());
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            resposta = "Erro interno: " + e.getMessage();
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            resposta = "Erro interno: " + exception.getMessage();
             exchange.sendResponseHeaders(500, resposta.length());
         }
 
         enviarResposta(exchange, resposta);
     }
 
-    private String handleGet(String path) throws IOException {
-        if (path.matches("/" + type.getSimpleName().toLowerCase() + "/\\d+")) {
-            int id = Integer.parseInt(path.split("/")[2]);
-            T entity = controller.show(id);
-            return entity != null ? objectMapper.writeValueAsString(entity) : type.getSimpleName() + " não encontrado";
-        } else {
-            List<T> entities = controller.index();
-            return objectMapper.writeValueAsString(entities);
+    private String handleGet(String path) throws IOException 
+    {
+        if (path.matches("^/\\w+/\\d+$")) {
+            String[] partes = path.split("/");
+            
+            if (partes.length >= 3) {
+                int id = Integer.parseInt(partes[2]);
+                T entity = controller.show(id);
+                
+                return entity != null 
+                    ? objectMapper.writeValueAsString(entity) 
+                    : type.getSimpleName() + " não encontrado";
+            }
         }
+    
+        List<T> entities = controller.index();
+        return objectMapper.writeValueAsString(entities);
     }
+    
 
-    private String handlePost(HttpExchange exchange) throws IOException {
+    private String handlePost(HttpExchange exchange) throws IOException 
+    {
         T newEntity = objectMapper.readValue(exchange.getRequestBody(), type);
         controller.create(newEntity);
         return type.getSimpleName() + " criado com sucesso!";
     }
 
-    private String handlePut(HttpExchange exchange, String path) throws IOException {
+    private String handlePut(HttpExchange exchange, String path) throws IOException 
+    {
         if (!path.matches("/" + type.getSimpleName().toLowerCase()+"s" + "/\\d+")) {
             return "ID inválido!";
         }
@@ -82,7 +94,8 @@ public class GenericHandler<T> implements HttpHandler {
         return type.getSimpleName() + " atualizado com sucesso!";
     }
 
-    private String handleDelete(String path) throws IOException {
+    private String handleDelete(String path) throws IOException 
+    {
         if (!path.matches("/" + type.getSimpleName().toLowerCase() + "/\\d+")) {
             return "ID inválido!";
         }
@@ -91,7 +104,8 @@ public class GenericHandler<T> implements HttpHandler {
         return type.getSimpleName() + " removido com sucesso!";
     }
 
-    private void enviarResposta(HttpExchange exchange, String resposta) throws IOException {
+    private void enviarResposta(HttpExchange exchange, String resposta) throws IOException 
+    {
         exchange.sendResponseHeaders(200, resposta.getBytes(StandardCharsets.UTF_8).length);
         OutputStream os = exchange.getResponseBody();
         os.write(resposta.getBytes(StandardCharsets.UTF_8));

@@ -9,8 +9,7 @@ public abstract class Veiculo
     private int ano;
     private double preco;
 
-    public Veiculo()
-    {
+    public Veiculo(){
         super();
     }
 
