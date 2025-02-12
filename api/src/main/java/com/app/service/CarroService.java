@@ -47,6 +47,10 @@ public class CarroService {
     }
 
     public void delete(int id) {
+        if (repository.findById(id) == null) {
+            throw new RuntimeException("Carro não encontrado");
+        }
+
         repository.delete(id);
     }
 }

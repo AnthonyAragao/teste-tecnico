@@ -11,41 +11,55 @@ import com.app.model.TipoCombustivel;
 import com.app.config.DatabaseConfig;
 import com.app.repository.interfaces.ICarroRepository;
 
-public class CarroRepository implements ICarroRepository
-{
-    public List<Carro> findAll() 
-    {
-        List<Carro> carros = new ArrayList<>();
-        String query = "SELECT * FROM carros "
-                     + "INNER JOIN veiculos ON carros.veiculo_id = veiculos.id "
-                     + "ORDER BY veiculos.ano DESC";
+public class CarroRepository implements ICarroRepository {
+    private static final String SELECT_ALL_CARROS_QUERY = "SELECT * FROM carros "
+            + "INNER JOIN veiculos ON carros.veiculo_id = veiculos.id "
+            + "ORDER BY veiculos.ano DESC";
 
-        try (
-            Connection conn = DatabaseConfig.getConnection();
-            PreparedStatement statement = conn.prepareStatement(query);
-            ResultSet result = statement.executeQuery();
-        ) {
+    private static final String SELECT_CARRO_BY_ID_QUERY = "SELECT * FROM carros "
+            + "INNER JOIN veiculos ON carros.veiculo_id = veiculos.id "
+            + "WHERE carros.id = ?";
+
+    private static final String INSERT_VEICULO_QUERY = "INSERT INTO veiculos (tipo, modelo, fabricante, ano, preco) VALUES (?, ?, ?, ?, ?)";
+
+    private static final String INSERT_CARRO_QUERY = "INSERT INTO carros (veiculo_id, quantidade_portas, tipo_combustivel) VALUES (?, ?, ?)";
+
+    private static final String UPDATE_VEICULO_QUERY = "UPDATE veiculos SET modelo = ?, fabricante = ?, ano = ?, preco = ? WHERE id = ?";
+
+    private static final String UPDATE_CARRO_QUERY = "UPDATE carros SET quantidade_portas = ?, tipo_combustivel = ? WHERE veiculo_id = ?";
+
+    private static final String DELETE_CARRO_QUERY = "DELETE FROM carros WHERE id = ?";
+
+    private static final String DELETE_VEICULO_QUERY = "DELETE FROM veiculos WHERE id = ?";
+
+    private static final String SELECT_VEICULO_ID_BY_CARRO_ID_QUERY = "SELECT veiculo_id FROM carros WHERE id = ?";
+
+    @Override
+    public List<Carro> findAll() {
+        List<Carro> carros = new ArrayList<>();
+       
+        try (Connection conn = DatabaseConfig.getConnection();
+             PreparedStatement statement = conn.prepareStatement(SELECT_ALL_CARROS_QUERY);
+             ResultSet result = statement.executeQuery()) {
+             
             while (result.next()) {
                 carros.add(mapResultSetToCarro(result));
             }
-        } catch (Exception exception) {
-            throw new RuntimeException(exception.getMessage());
+        } catch (SQLException exception) {
+            throw new RuntimeException("Erro ao buscar todos os carros", exception);
         }
 
         return carros;
     }
-   
-    @Override
-    public Carro findById(int id) 
-    {
-        Carro carro = null;
-        String sql = "SELECT * FROM carros "
-                   + "INNER JOIN veiculos ON carros.veiculo_id = veiculos.id "
-                   + "WHERE carros.id = ?";
 
+
+    @Override
+    public Carro findById(int id) {
+        Carro carro = null;
+       
         try (
             Connection conn = DatabaseConfig.getConnection();
-            PreparedStatement statement = conn.prepareStatement(sql);
+            PreparedStatement statement = conn.prepareStatement(SELECT_CARRO_BY_ID_QUERY)
         ) {
             statement.setInt(1, id);
 
@@ -61,18 +75,15 @@ public class CarroRepository implements ICarroRepository
         return carro;
     }
 
+
     @Override
-    public void insert(Carro carro) 
-    {
-        String veiculoSql = "INSERT INTO veiculos (tipo, modelo, fabricante, ano, preco) VALUES (?, ?, ?, ?, ?)";
-        String carroSql = "INSERT INTO carros (veiculo_id, quantidade_portas, tipo_combustivel) VALUES (?, ?, ?)";
-    
+    public void insert(Carro carro) {
         try (Connection conn = DatabaseConfig.getConnection()) {
             conn.setAutoCommit(false);
-    
+           
             try (
-                PreparedStatement veiculoStmt = conn.prepareStatement(veiculoSql, PreparedStatement.RETURN_GENERATED_KEYS);
-                PreparedStatement carroStmt = conn.prepareStatement(carroSql)
+                PreparedStatement veiculoStmt = conn.prepareStatement(INSERT_VEICULO_QUERY, PreparedStatement.RETURN_GENERATED_KEYS);
+                PreparedStatement carroStmt = conn.prepareStatement(INSERT_CARRO_QUERY)
             ) {
                 veiculoStmt.setString(1, carro.getTipo());
                 veiculoStmt.setString(2, carro.getModelo());
@@ -80,19 +91,21 @@ public class CarroRepository implements ICarroRepository
                 veiculoStmt.setInt(4, carro.getAno());
                 veiculoStmt.setDouble(5, carro.getPreco());
                 veiculoStmt.executeUpdate();
-    
+
+                // Pegando o ID gerado para o veiculo
                 try (ResultSet generatedKeys = veiculoStmt.getGeneratedKeys()) {
-                    if (generatedKeys == null || !generatedKeys.next()) {
-                        throw new RuntimeException("Erro ao inserir veículo: ID não gerado.");
+                    if (!generatedKeys.next()) {
+                        throw new RuntimeException("Erro ao gerar o ID do veículo");
                     }
-    
+
                     int veiculoId = generatedKeys.getInt(1);
+
                     carroStmt.setInt(1, veiculoId);
                     carroStmt.setInt(2, carro.getQuantidadePortas());
                     carroStmt.setString(3, carro.getTipoCombustivel().name());
                     carroStmt.executeUpdate();
                 }
-    
+
                 conn.commit();
             } catch (SQLException exception) {
                 conn.rollback();
@@ -104,8 +117,7 @@ public class CarroRepository implements ICarroRepository
     }
 
     @Override
-    public void update(Carro carro) 
-    {
+    public void update(Carro carro) {
         String veiculoSql = "UPDATE veiculos SET modelo = ?, fabricante = ?, ano = ?, preco = ? WHERE id = ?";
         String carroSql = "UPDATE carros SET quantidade_portas = ?, tipo_combustivel = ? WHERE veiculo_id = ?";
 
@@ -113,9 +125,8 @@ public class CarroRepository implements ICarroRepository
             conn.setAutoCommit(false);
 
             try (
-                PreparedStatement veiculoStmt = conn.prepareStatement(veiculoSql);
-                PreparedStatement carroStmt = conn.prepareStatement(carroSql)
-            ) {
+                    PreparedStatement veiculoStmt = conn.prepareStatement(veiculoSql);
+                    PreparedStatement carroStmt = conn.prepareStatement(carroSql)) {
                 veiculoStmt.setString(1, carro.getModelo());
                 veiculoStmt.setString(2, carro.getFabricante());
                 veiculoStmt.setInt(3, carro.getAno());
@@ -140,32 +151,21 @@ public class CarroRepository implements ICarroRepository
     }
 
     @Override
-    public void delete(int id) 
-    {
-        String sqlDeleteCarro = "DELETE FROM carros WHERE id = ?";
-        String sqlDeleteVeiculo = "DELETE FROM veiculos WHERE id = ?";
-
+    public void delete(int id) {
         try (Connection conn = DatabaseConfig.getConnection()) {
             conn.setAutoCommit(false);
 
+            int veiculoId = getVeiculoIdByCarroId(conn, id);
+           
             try (
-                PreparedStatement stmtCarro = conn.prepareStatement(sqlDeleteCarro);
-                PreparedStatement stmtVeiculo = conn.prepareStatement(sqlDeleteVeiculo)
+                PreparedStatement stmtCarro = conn.prepareStatement(DELETE_CARRO_QUERY);
+                PreparedStatement stmtVeiculo = conn.prepareStatement(DELETE_VEICULO_QUERY)
             ) {
-                int veiculoId;
-                try (PreparedStatement stmtGetVeiculoId = conn.prepareStatement("SELECT veiculo_id FROM carros WHERE id = ?")) {
-                    stmtGetVeiculoId.setInt(1, id);
-                    try (ResultSet rs = stmtGetVeiculoId.executeQuery()) {
-                        if (rs.next()) {
-                            veiculoId = rs.getInt("veiculo_id");
-                        } else {
-                            throw new RuntimeException("Carro não encontrado com ID: " + id);
-                        }
-                    }
-                }
+                // Deletando carro
                 stmtCarro.setInt(1, id);
                 stmtCarro.executeUpdate();
 
+                // Deletando veiculo
                 stmtVeiculo.setInt(1, veiculoId);
                 stmtVeiculo.executeUpdate();
 
@@ -179,8 +179,19 @@ public class CarroRepository implements ICarroRepository
         }
     }
 
-    private Carro mapResultSetToCarro(ResultSet resultSet) throws SQLException 
-    {
+    private int getVeiculoIdByCarroId(Connection conn, int carroId) throws SQLException {
+        try (PreparedStatement stmt = conn.prepareStatement(SELECT_VEICULO_ID_BY_CARRO_ID_QUERY)) {
+            stmt.setInt(1, carroId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("veiculo_id");
+                } 
+                throw new RuntimeException("Carro não encontrado com ID: " + carroId);
+            }
+        }
+    }
+
+    private Carro mapResultSetToCarro(ResultSet resultSet) throws SQLException {
         Carro carro = new Carro(
             resultSet.getString("tipo"),
             resultSet.getString("modelo"),

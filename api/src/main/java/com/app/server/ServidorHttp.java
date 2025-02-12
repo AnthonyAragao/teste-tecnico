@@ -7,9 +7,12 @@ import com.sun.net.httpserver.HttpServer;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 
-public class ServidorHttp {
+public class ServidorHttp 
+{
+    private static final int PORTA = 8080;
+
     public static void main(String[] args) throws IOException {
-        HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
+        HttpServer server = HttpServer.create(new InetSocketAddress(PORTA), 0);
         MotoController motoController = new MotoController();
         CarroController carroController = new CarroController();
 
@@ -19,6 +22,6 @@ public class ServidorHttp {
 
         server.setExecutor(null);
         server.start();
-        System.out.println("Servidor rodando em http://localhost:8080/");
+        System.out.println("Servidor rodando em http://localhost:" + PORTA);
     }
 }

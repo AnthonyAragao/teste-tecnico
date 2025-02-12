@@ -10,6 +10,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class GenericHandler<T> implements HttpHandler {
+    private static final String METODO_NAO_PERMITIDO = "Método não permitido";
+    private static final String ERRO_INESPERADO = "Erro interno: ";
+
     private final GenericController<T> controller;
     private final ObjectMapper objectMapper;
     private final Class<T> type;
@@ -21,94 +24,74 @@ public class GenericHandler<T> implements HttpHandler {
     }
 
     @Override
-    public void handle(HttpExchange exchange) throws IOException 
-    {
+    public void handle(HttpExchange exchange) throws IOException {
         String metodo = exchange.getRequestMethod();
         String path = exchange.getRequestURI().getPath();
-        String resposta = "";
+        String resposta;
 
         try {
-            switch (metodo) {
-                case "GET":
-                    resposta = handleGet(path);
-                    break;
-                case "POST":
-                    resposta = handlePost(exchange);
-                    break;
-                case "PUT":
-                    resposta = handlePut(exchange, path);
-                    break;
-                case "DELETE":
-                    resposta = handleDelete(path);
-                    break;
-                default:
-                    resposta = "Método não permitido";
-                    exchange.sendResponseHeaders(405, resposta.length());
-            }
+            resposta = switch (metodo) {
+                case "GET" -> handleGet(path);
+                case "POST" -> handlePost(exchange);
+                case "PUT" -> handlePut(exchange, path);
+                case "DELETE" -> handleDelete(path);
+                default -> {
+                    sendResponse(exchange, METODO_NAO_PERMITIDO, 405);
+                    yield METODO_NAO_PERMITIDO;
+                }
+            };
         } catch (Exception exception) {
             exception.printStackTrace();
-            resposta = "Erro interno: " + exception.getMessage();
-            exchange.sendResponseHeaders(500, resposta.length());
+            resposta = ERRO_INESPERADO + exception.getMessage();
+            sendResponse(exchange, resposta, 500);
         }
 
-        enviarResposta(exchange, resposta);
+        sendResponse(exchange, resposta, 200);
     }
 
-    private String handleGet(String path) throws IOException 
-    {
-        if (path.matches("^/\\w+/\\d+$")) {
-            String[] partes = path.split("/");
-            
-            if (partes.length >= 3) {
-                int id = Integer.parseInt(partes[2]);
-                T entity = controller.show(id);
-                
-                return entity != null 
-                    ? objectMapper.writeValueAsString(entity) 
-                    : type.getSimpleName() + " não encontrado";
-            }
+    private String handleGet(String path) throws IOException {
+        if (isSingleEntityRequest(path)) {
+            int id = getIdFromPath(path);
+            T entity = controller.show(id);
+            return entity != null ? objectMapper.writeValueAsString(entity) : type.getSimpleName() + " não encontrado";
         }
-    
+
         List<T> entities = controller.index();
         return objectMapper.writeValueAsString(entities);
     }
-    
 
-    private String handlePost(HttpExchange exchange) throws IOException 
-    {
+    private String handlePost(HttpExchange exchange) throws IOException {
         T newEntity = objectMapper.readValue(exchange.getRequestBody(), type);
         controller.create(newEntity);
         return type.getSimpleName() + " criado com sucesso!";
     }
 
-    private String handlePut(HttpExchange exchange, String path) throws IOException 
-    {
-        if (!path.matches("/" + type.getSimpleName().toLowerCase()+"s" + "/\\d+")) {
-            return "ID inválido!";
-        }
-        int id = Integer.parseInt(path.split("/")[2]);
+    private String handlePut(HttpExchange exchange, String path) throws IOException {
+        int id = getIdFromPath(path);
         T updatedEntity = objectMapper.readValue(exchange.getRequestBody(), type);
-        // Aqui você pode definir um método no controlador para associar o ID ao objeto
-        // Por exemplo: updatedEntity.setId(id);
-        controller.update(id,updatedEntity);
+        controller.update(id, updatedEntity);
         return type.getSimpleName() + " atualizado com sucesso!";
     }
 
-    private String handleDelete(String path) throws IOException 
-    {
-        if (!path.matches("/" + type.getSimpleName().toLowerCase() + "/\\d+")) {
-            return "ID inválido!";
-        }
-        int id = Integer.parseInt(path.split("/")[2]);
+    private String handleDelete(String path) throws IOException {
+        int id = getIdFromPath(path);
         controller.delete(id);
         return type.getSimpleName() + " removido com sucesso!";
     }
 
-    private void enviarResposta(HttpExchange exchange, String resposta) throws IOException 
-    {
-        exchange.sendResponseHeaders(200, resposta.getBytes(StandardCharsets.UTF_8).length);
-        OutputStream os = exchange.getResponseBody();
-        os.write(resposta.getBytes(StandardCharsets.UTF_8));
-        os.close();
+    private int getIdFromPath(String path) {
+        String[] partes = path.split("/");
+        return Integer.parseInt(partes[2]);
+    }
+
+    private boolean isSingleEntityRequest(String path) {
+        return path.matches("^/\\w+/\\d+$");
+    }
+
+    private void sendResponse(HttpExchange exchange, String response, int statusCode) throws IOException {
+        exchange.sendResponseHeaders(statusCode, response.getBytes(StandardCharsets.UTF_8).length);
+        try (OutputStream os = exchange.getResponseBody()) {
+            os.write(response.getBytes(StandardCharsets.UTF_8));
+        }
     }
 }
