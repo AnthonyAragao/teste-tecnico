@@ -4,7 +4,7 @@
 
 <template>
     <header class="bg-[#FFB80C] text-gray-800 p-4 text-center font-bold uppercase tracking-wider">
-        Gerenciamento de frota
+        <h1>Gerenciamento de frota</h1>
     </header>
 
     <NavBar />
