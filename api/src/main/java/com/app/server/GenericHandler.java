@@ -10,8 +10,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class GenericHandler<T> implements HttpHandler {
-    private static final String METODO_NAO_PERMITIDO = "Método não permitido";
-    private static final String ERRO_INESPERADO = "Erro interno: ";
+    private static final String METHOD_NOT_ALLOWED = "Método não permitido";
+    private static final String INTERNAL_ERROR = "Erro interno: ";
 
     private final GenericController<T> controller;
     private final ObjectMapper objectMapper;
@@ -25,35 +25,39 @@ public class GenericHandler<T> implements HttpHandler {
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        String metodo = exchange.getRequestMethod();
-        String path = exchange.getRequestURI().getPath();
-        String resposta;
-
         try {
-            resposta = switch (metodo) {
-                case "GET" -> handleGet(path);
-                case "POST" -> handlePost(exchange);
-                case "PUT" -> handlePut(exchange, path);
-                case "DELETE" -> handleDelete(path);
-                default -> {
-                    sendResponse(exchange, METODO_NAO_PERMITIDO, 405);
-                    yield METODO_NAO_PERMITIDO;
-                }
-            };
+            String response = processRequest(exchange);
+            sendResponse(exchange, response, 200);
         } catch (Exception exception) {
             exception.printStackTrace();
-            resposta = ERRO_INESPERADO + exception.getMessage();
-            sendResponse(exchange, resposta, 500);
+            String errorMessage = INTERNAL_ERROR + exception.getMessage();
+            sendResponse(exchange, errorMessage, 500);
         }
+    }
 
-        sendResponse(exchange, resposta, 200);
+    private String processRequest(HttpExchange exchange) throws IOException {
+        String method = exchange.getRequestMethod();
+        String path = exchange.getRequestURI().getPath();
+
+        return switch (method) {
+            case "GET" -> handleGet(path);
+            case "POST" -> handlePost(exchange);
+            case "PUT" -> handlePut(exchange, path);
+            case "DELETE" -> handleDelete(path);
+            default -> {
+                sendResponse(exchange, METHOD_NOT_ALLOWED, 405);
+                yield METHOD_NOT_ALLOWED;
+            }
+        };
     }
 
     private String handleGet(String path) throws IOException {
         if (isSingleEntityRequest(path)) {
-            int id = getIdFromPath(path);
+            int id = extractIdFromPath(path);
             T entity = controller.show(id);
-            return entity != null ? objectMapper.writeValueAsString(entity) : type.getSimpleName() + " não encontrado";
+            return entity != null 
+                ? objectMapper.writeValueAsString(entity) 
+                : type.getSimpleName() + " não encontrado";
         }
 
         List<T> entities = controller.index();
@@ -67,19 +71,19 @@ public class GenericHandler<T> implements HttpHandler {
     }
 
     private String handlePut(HttpExchange exchange, String path) throws IOException {
-        int id = getIdFromPath(path);
+        int id = extractIdFromPath(path);
         T updatedEntity = objectMapper.readValue(exchange.getRequestBody(), type);
         controller.update(id, updatedEntity);
         return type.getSimpleName() + " atualizado com sucesso!";
     }
 
     private String handleDelete(String path) throws IOException {
-        int id = getIdFromPath(path);
+        int id = extractIdFromPath(path);
         controller.delete(id);
         return type.getSimpleName() + " removido com sucesso!";
     }
 
-    private int getIdFromPath(String path) {
+    private int extractIdFromPath(String path) {
         String[] partes = path.split("/");
         return Integer.parseInt(partes[2]);
     }

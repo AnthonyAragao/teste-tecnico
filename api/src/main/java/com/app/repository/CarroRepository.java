@@ -52,7 +52,6 @@ public class CarroRepository implements ICarroRepository {
         return carros;
     }
 
-
     @Override
     public Carro findById(int id) {
         Carro carro = null;
@@ -118,15 +117,14 @@ public class CarroRepository implements ICarroRepository {
 
     @Override
     public void update(Carro carro) {
-        String veiculoSql = "UPDATE veiculos SET modelo = ?, fabricante = ?, ano = ?, preco = ? WHERE id = ?";
-        String carroSql = "UPDATE carros SET quantidade_portas = ?, tipo_combustivel = ? WHERE veiculo_id = ?";
-
         try (Connection conn = DatabaseConfig.getConnection()) {
             conn.setAutoCommit(false);
 
             try (
-                    PreparedStatement veiculoStmt = conn.prepareStatement(veiculoSql);
-                    PreparedStatement carroStmt = conn.prepareStatement(carroSql)) {
+                PreparedStatement veiculoStmt = conn.prepareStatement(UPDATE_VEICULO_QUERY);
+                PreparedStatement carroStmt = conn.prepareStatement(UPDATE_CARRO_QUERY)
+            ) {
+                // Atualizando veiculo
                 veiculoStmt.setString(1, carro.getModelo());
                 veiculoStmt.setString(2, carro.getFabricante());
                 veiculoStmt.setInt(3, carro.getAno());
@@ -134,9 +132,9 @@ public class CarroRepository implements ICarroRepository {
                 veiculoStmt.setInt(5, carro.getId());
                 veiculoStmt.executeUpdate();
 
+                // Atualizando carro
                 carroStmt.setInt(1, carro.getQuantidadePortas());
                 carroStmt.setString(2, carro.getTipoCombustivel().name());
-
                 carroStmt.setInt(3, carro.getId());
                 carroStmt.executeUpdate();
 
@@ -192,7 +190,8 @@ public class CarroRepository implements ICarroRepository {
     }
 
     private Carro mapResultSetToCarro(ResultSet resultSet) throws SQLException {
-        Carro carro = new Carro(
+        return new Carro(
+            resultSet.getInt("veiculo_id"),
             resultSet.getString("tipo"),
             resultSet.getString("modelo"),
             resultSet.getString("fabricante"),
@@ -201,7 +200,5 @@ public class CarroRepository implements ICarroRepository {
             resultSet.getInt("quantidade_portas"),
             TipoCombustivel.valueOf(resultSet.getString("tipo_combustivel").toUpperCase())
         );
-        carro.setId(resultSet.getInt("veiculo_id"));
-        return carro;
     }
 }

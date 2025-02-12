@@ -6,8 +6,7 @@ import com.app.model.Carro;
 import com.app.repository.interfaces.ICarroRepository;
 
 public class CarroService {
-
-    private ICarroRepository repository;
+    private final ICarroRepository repository;
 
     public CarroService(ICarroRepository repository) {
         this.repository = repository;
@@ -25,32 +24,41 @@ public class CarroService {
         repository.insert(carro);
     }
 
-    public void update(int id, Carro carro) {
-        Carro carroFinded = null;
-        try {
-            carroFinded = repository.findById(id);
-        } catch (Exception e) {
-            System.out.println("Carro não encontrado");
-            e.printStackTrace();
+    public void update(int id, Carro carroAtualizado) {
+        Carro carroExistente = repository.findById(id);
+        if (carroExistente == null) {
+            throw new RuntimeException("Carro não encontrado");
         }
-        Carro newCarro = new Carro(
-            carroFinded.getId(),
-            carro.getTipo() != null ? carro.getTipo() : carroFinded.getTipo(),
-            carro.getModelo() != null ? carro.getModelo() : carroFinded.getModelo(),
-            carro.getFabricante() != null ? carro.getFabricante() : carroFinded.getFabricante(),
-            carro.getAno() != 0 ? carro.getAno() : carroFinded.getAno(),
-            carro.getPreco() != 0 ? carro.getPreco() : carroFinded.getPreco(),
-            carro.getQuantidadePortas() != 0 ? carro.getQuantidadePortas() : carroFinded.getQuantidadePortas(),
-            carro.getTipoCombustivel() != null ? carro.getTipoCombustivel() : carroFinded.getTipoCombustivel()
-        );
-        repository.update(newCarro);
+        Carro carroParaAtualizar = mergeCarro(carroExistente, carroAtualizado);
+        repository.update(carroParaAtualizar);
     }
 
     public void delete(int id) {
         if (repository.findById(id) == null) {
             throw new RuntimeException("Carro não encontrado");
         }
-
         repository.delete(id);
+    }
+
+    private Carro mergeCarro(Carro carroExistente, Carro carroAtualizado) {
+        if (carroAtualizado.getModelo() != null) {
+            carroExistente.setModelo(carroAtualizado.getModelo());
+        }
+        if (carroAtualizado.getFabricante() != null) {
+            carroExistente.setFabricante(carroAtualizado.getFabricante());
+        }
+        if (carroAtualizado.getAno() != 0) {
+            carroExistente.setAno(carroAtualizado.getAno());
+        }
+        if (carroAtualizado.getPreco() != 0) {
+            carroExistente.setPreco(carroAtualizado.getPreco());
+        }
+        if (carroAtualizado.getQuantidadePortas() != 0) {
+            carroExistente.setQuantidadePortas(carroAtualizado.getQuantidadePortas());
+        }
+        if (carroAtualizado.getTipoCombustivel() != null) {
+            carroExistente.setTipoCombustivel(carroAtualizado.getTipoCombustivel());
+        }
+        return carroExistente;
     }
 }

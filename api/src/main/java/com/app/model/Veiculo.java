@@ -1,7 +1,6 @@
 package com.app.model;
 
-public abstract class Veiculo 
-{
+public abstract class Veiculo {
     private Integer id;
     private String tipo;
     private String modelo;
@@ -9,17 +8,7 @@ public abstract class Veiculo
     private int ano;
     private double preco;
 
-    public Veiculo(){
-        super();
-    }
-
-    public Veiculo(String tipo, String modelo,  String fabricante, int ano, double preco){
-        this.tipo = tipo;
-        this.modelo = modelo;
-        this.fabricante = fabricante;
-        this.ano = ano;
-        this.preco = preco;
-    }
+    public Veiculo() {}
 
     public Veiculo(int id, String tipo, String modelo,  String fabricante, int ano, double preco){
         this.id = id;
@@ -30,73 +19,55 @@ public abstract class Veiculo
         this.preco = preco;
     }
 
-    // Getters
-    public Integer getId() 
-    {
+    public Integer getId() {
         return id;
     }
 
-    public String getTipo() 
-    {
+    public String getTipo() {
         return tipo;
     }
 
-    public String getModelo() 
-    {
+    public String getModelo() {
         return modelo;
     }
 
-    public String getFabricante() 
-    {
+    public String getFabricante() {
         return fabricante;
     }
 
-    public int getAno() 
-    {
+    public int getAno() {
         return ano;
     }
 
-    public double getPreco() 
-    {
+    public double getPreco() {
         return preco;
     }
 
-    // Setters
-    public void setId(Integer id) 
-    { 
+    public void setId(Integer id) { 
         this.id = id; 
     }
 
-    public void setModelo(String modelo) 
-    {
+    public void setModelo(String modelo) {
         this.modelo = modelo;
     }
 
-    public void setFabricante(String fabricante) 
-    {
+    public void setFabricante(String fabricante) {
         this.fabricante = fabricante;
     }
 
-    public void setAno(int ano) 
-    {
+    public void setAno(int ano) {
         this.ano = ano;
     }
 
-    public void setPreco(double preco) 
-    {
+    public void setPreco(double preco) {
+        if (preco < 0) {
+            throw new IllegalArgumentException("O preço não pode ser negativo.");
+        }
         this.preco = preco;
     }
 
-
     @Override
-    public String toString() 
-    {
-        return "Veiculo{" +
-               "id=" + id +
-               ", modelo='" + modelo + '\'' +
-               ", fabricante='" + fabricante + '\'' +
-               ", ano=" + ano +
-               ", preco=" + preco +
-               '}';
+    public String toString() {
+        return String.format("%s: %s %s (%d) - R$ %.2f", tipo, fabricante, modelo, ano, preco);
     }
 }

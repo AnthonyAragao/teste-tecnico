@@ -4,8 +4,7 @@ import java.util.List;
 
 import com.app.model.Moto;
 
-public interface IMotoRepository 
-{
+public interface IMotoRepository {
     public List<Moto> findAll();
     public Moto findById(int id);
     public void insert(Moto veiculo);

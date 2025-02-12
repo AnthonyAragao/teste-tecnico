@@ -10,18 +10,35 @@ import com.app.model.Moto;
 import com.app.config.DatabaseConfig;
 import com.app.repository.interfaces.IMotoRepository;
 
-public class MotoRepository implements IMotoRepository
-{
-    public List<Moto> findAll() 
-    {
-        List<Moto> motos = new ArrayList<>();
-        String query = "SELECT * FROM motos "
+public class MotoRepository implements IMotoRepository {
+    private static final String SELECT_ALL_MOTOS_QUERY = "SELECT * FROM motos "
             + "INNER JOIN veiculos ON motos.veiculo_id = veiculos.id "
             + "ORDER BY veiculos.ano DESC";
 
+    private static final String SELECT_MOTO_BY_ID_QUERY = "SELECT * FROM motos "
+            + "INNER JOIN veiculos ON motos.veiculo_id = veiculos.id "
+            + "WHERE motos.id = ?";
+
+    private static final String INSERT_VEICULO_QUERY = "INSERT INTO veiculos (tipo, modelo, fabricante, ano, preco) VALUES (?, ?, ?, ?, ?)";
+
+    private static final String INSERT_MOTO_QUERY = "INSERT INTO motos (veiculo_id, cilindrada) VALUES (?, ?)";
+
+    private static final String UPDATE_VEICULO_QUERY = "UPDATE veiculos SET modelo = ?, fabricante = ?, ano = ?, preco = ? WHERE id = ?";
+
+    private static final String UPDATE_MOTO_QUERY = "UPDATE motos SET cilindrada = ? WHERE veiculo_id = ?";
+
+    private static final String DELETE_MOTO_QUERY = "DELETE FROM motos WHERE id = ?";
+
+    private static final String DELETE_VEICULO_QUERY = "DELETE FROM veiculos WHERE id = ?";
+
+    private static final String SELECT_VEICULO_ID_BY_MOTO_ID_QUERY = "SELECT veiculo_id FROM motos WHERE id = ?";
+
+    public List<Moto> findAll() {
+        List<Moto> motos = new ArrayList<>();
+
         try(
             Connection conn = DatabaseConfig.getConnection();
-            PreparedStatement statement = conn.prepareStatement(query);
+            PreparedStatement statement = conn.prepareStatement(SELECT_ALL_MOTOS_QUERY);
             ResultSet result = statement.executeQuery();
         ){
             while (result.next()) {
@@ -35,16 +52,12 @@ public class MotoRepository implements IMotoRepository
     }
    
     @Override
-    public Moto findById(int id) 
-    {   
+    public Moto findById(int id) {   
         Moto moto = null;
-        String sql =  "SELECT * FROM motos "
-            + "INNER JOIN veiculos ON motos.veiculo_id = veiculos.id "
-            + "WHERE motos.id = ?";
 
         try(
             Connection conn = DatabaseConfig.getConnection();
-            PreparedStatement statement = conn.prepareStatement(sql);
+            PreparedStatement statement = conn.prepareStatement(SELECT_MOTO_BY_ID_QUERY);
         ){
             statement.setInt(1, id);
 
@@ -61,17 +74,13 @@ public class MotoRepository implements IMotoRepository
     }
 
     @Override
-    public void insert(Moto moto) 
-    {
-        String veiculoSql = "INSERT INTO veiculos (tipo, modelo, fabricante, ano, preco) VALUES (?, ?, ?, ?, ?)";
-        String motoSql = "INSERT INTO motos (veiculo_id, cilindrada) VALUES (?, ?)";
-    
+    public void insert(Moto moto) {
         try (Connection conn = DatabaseConfig.getConnection()) {
             conn.setAutoCommit(false); 
     
             try (
-                PreparedStatement veiculoStmt = conn.prepareStatement(veiculoSql, PreparedStatement.RETURN_GENERATED_KEYS);
-                PreparedStatement motoStmt = conn.prepareStatement(motoSql)
+                PreparedStatement veiculoStmt = conn.prepareStatement(INSERT_VEICULO_QUERY, PreparedStatement.RETURN_GENERATED_KEYS);
+                PreparedStatement motoStmt = conn.prepareStatement(INSERT_MOTO_QUERY)
             ) {
                 // Inserção na tabela 'veiculos'
                 veiculoStmt.setString(1, moto.getTipo());
@@ -105,17 +114,13 @@ public class MotoRepository implements IMotoRepository
     }
 
     @Override
-    public void update(Moto moto) 
-    {
-        String veiculoSql = "UPDATE veiculos SET modelo = ?, fabricante = ?, ano = ?, preco = ? WHERE id = ?";
-        String motoSql = "UPDATE motos SET cilindrada = ? WHERE veiculo_id = ?";
-
+    public void update(Moto moto) {
         try (Connection conn = DatabaseConfig.getConnection()) {
             conn.setAutoCommit(false); 
 
             try (
-                PreparedStatement veiculoStmt = conn.prepareStatement(veiculoSql);
-                PreparedStatement motoStmt = conn.prepareStatement(motoSql)
+                PreparedStatement veiculoStmt = conn.prepareStatement(UPDATE_VEICULO_QUERY);
+                PreparedStatement motoStmt = conn.prepareStatement(UPDATE_MOTO_QUERY)
             ) {
                 veiculoStmt.setString(1, moto.getModelo());
                 veiculoStmt.setString(2, moto.getFabricante());
@@ -139,32 +144,21 @@ public class MotoRepository implements IMotoRepository
     }
 
     @Override
-    public void delete(int id) 
-    {
-        String sqlDeleteMoto = "DELETE FROM motos WHERE id = ?";
-        String sqlDeleteVeiculo = "DELETE FROM veiculos WHERE id = ?";
-
+    public void delete(int id) {
         try (Connection conn = DatabaseConfig.getConnection()) {
             conn.setAutoCommit(false);
 
+            int veiculoId = getVeiculoIdByMotoId(conn, id);
+
             try (
-                PreparedStatement stmtMoto = conn.prepareStatement(sqlDeleteMoto);
-                PreparedStatement stmtVeiculo = conn.prepareStatement(sqlDeleteVeiculo)
+                PreparedStatement stmtMoto = conn.prepareStatement(DELETE_MOTO_QUERY);
+                PreparedStatement stmtVeiculo = conn.prepareStatement(DELETE_VEICULO_QUERY)
             ) {
-                int veiculoId;
-                try (PreparedStatement stmtGetVeiculoId = conn.prepareStatement("SELECT veiculo_id FROM motos WHERE id = ?")) {
-                    stmtGetVeiculoId.setInt(1, id);
-                    try (ResultSet rs = stmtGetVeiculoId.executeQuery()) {
-                        if (rs.next()) {
-                            veiculoId = rs.getInt("veiculo_id");
-                        } else {
-                            throw new RuntimeException("Moto not found with ID: " + id);
-                        }
-                    }
-                }
+                // Deletando moto
                 stmtMoto.setInt(1, id);
                 stmtMoto.executeUpdate();
 
+                // Deletando veiculo
                 stmtVeiculo.setInt(1, veiculoId);
                 stmtVeiculo.executeUpdate();
 
@@ -178,10 +172,21 @@ public class MotoRepository implements IMotoRepository
         }
     }
 
+    private int getVeiculoIdByMotoId(Connection conn, int motoId) throws SQLException {
+        try (PreparedStatement stmt = conn.prepareStatement(SELECT_VEICULO_ID_BY_MOTO_ID_QUERY)) {
+            stmt.setInt(1, motoId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("veiculo_id");
+                }
+                throw new RuntimeException("Moto não encontrada com ID: " + motoId);
+            }
+        }
+    }
 
-    private Moto mapResultSetToMoto(ResultSet resultSet) throws SQLException 
-    {
-        Moto moto = new Moto(
+    private Moto mapResultSetToMoto(ResultSet resultSet) throws SQLException {
+        return new Moto(
+            resultSet.getInt("veiculo_id"),
             resultSet.getString("tipo"),
             resultSet.getString("modelo"),
             resultSet.getString("fabricante"),
@@ -189,7 +194,5 @@ public class MotoRepository implements IMotoRepository
             resultSet.getDouble("preco"),
             resultSet.getInt("cilindrada")
         );
-        moto.setId(resultSet.getInt("veiculo_id"));
-        return moto;
     }
 }

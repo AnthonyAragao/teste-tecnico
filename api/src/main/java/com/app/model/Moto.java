@@ -1,16 +1,10 @@
 package com.app.model;
 
-public class Moto extends Veiculo 
-{
+public class Moto extends Veiculo {
     private int cilindrada;
 
     public Moto() {
         super();
-    }
-
-    public Moto(String tipo, String modelo, String fabricante, int ano, double preco, int cilindrada) {
-        super(tipo, modelo, fabricante, ano, preco);
-        this.cilindrada = cilindrada;
     }
 
     public Moto(int id, String tipo, String modelo, String fabricante, int ano, double preco, int cilindrada) {
