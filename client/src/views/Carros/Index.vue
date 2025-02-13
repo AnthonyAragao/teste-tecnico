@@ -4,6 +4,7 @@
     import Layout from '@/components/Layout.vue'
     import api from '@/services/axios.js'
     import CarrosTable from '@/components/Tables/CarrosTable.vue'
+    import SuccessMessage from '@/components/Alerts/SuccessMessage.vue'
 
     const route = useRoute()
     const successMessage = ref(route.query.success || '')
@@ -30,7 +31,7 @@
     })
 
     const deleteCarro = () => {
-        successMessage.value = 'Carro excluída com sucesso!'
+        successMessage.value = 'Carro excluído com sucesso!'
         fetchCarros()
         setTimeout(() => {
             successMessage.value = ''
@@ -40,13 +41,8 @@
 
 <template>
     <Layout>
-        <div 
-            v-if="successMessage" 
-            class="px-4 py-2 mb-4 text-green-700 bg-green-100 border border-green-400 rounded"
-        >
-            {{ successMessage }}
-        </div>
-
+        <SuccessMessage :message="successMessage" />
+       
         <div class="flex justify-between items-center">
             <h2 class="text-2xl font-semibold text-gray-800">Carros</h2>
 
