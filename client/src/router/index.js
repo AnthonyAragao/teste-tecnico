@@ -15,10 +15,14 @@ const router = createRouter({
       component: () => import('../views/Motos/Index.vue'),
     },
     {
+      path: '/motos/create',
+      name: 'motos-create',
+      component: () => import('../views/Motos/Form.vue'),
+    },
+    {
       path: '/motos/:id/edit',
       name: 'motos-edit',
       component: () => import('../views/Motos/Form.vue'),
-      props: true,
     },
     {
       path: '/carros',

@@ -68,9 +68,17 @@ public class GenericHandler<T> implements HttpHandler {
     }
 
     private String handlePost(HttpExchange exchange) throws IOException {
-        T newEntity = objectMapper.readValue(exchange.getRequestBody(), type);
-        controller.create(newEntity);
-        return type.getSimpleName() + " criado com sucesso!";
+        try {
+            T newEntity = objectMapper.readValue(exchange.getRequestBody(), type);
+            controller.create(newEntity);
+            return type.getSimpleName() + " criado com sucesso!";
+        } catch (IllegalArgumentException e) { // Erro de validação
+            sendResponse(exchange, e.getMessage(), 400);
+            return e.getMessage();
+        } catch (Exception e) {
+            sendResponse(exchange, "Erro ao criar " + type.getSimpleName(), 500);
+            return "Erro ao criar " + type.getSimpleName();
+        }
     }
 
     private String handlePut(HttpExchange exchange, String path) throws IOException {
