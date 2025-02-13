@@ -25,7 +25,7 @@ public class MotoRepository implements IMotoRepository {
 
     private static final String UPDATE_VEICULO_QUERY = "UPDATE veiculos SET modelo = ?, fabricante = ?, ano = ?, preco = ? WHERE id = ?";
 
-    private static final String UPDATE_MOTO_QUERY = "UPDATE motos SET cilindrada = ? WHERE veiculo_id = ?";
+    private static final String UPDATE_MOTO_QUERY = "UPDATE motos SET cilindrada = ? WHERE id = ?";
 
     private static final String DELETE_MOTO_QUERY = "DELETE FROM motos WHERE id = ?";
 

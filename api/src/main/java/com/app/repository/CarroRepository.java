@@ -26,7 +26,7 @@ public class CarroRepository implements ICarroRepository {
 
     private static final String UPDATE_VEICULO_QUERY = "UPDATE veiculos SET modelo = ?, fabricante = ?, ano = ?, preco = ? WHERE id = ?";
 
-    private static final String UPDATE_CARRO_QUERY = "UPDATE carros SET quantidade_portas = ?, tipo_combustivel = ? WHERE veiculo_id = ?";
+    private static final String UPDATE_CARRO_QUERY = "UPDATE carros SET quantidade_portas = ?, tipo_combustivel = ? WHERE id = ?";
 
     private static final String DELETE_CARRO_QUERY = "DELETE FROM carros WHERE id = ?";
 

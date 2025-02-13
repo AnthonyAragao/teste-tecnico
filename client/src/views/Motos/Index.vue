@@ -28,6 +28,14 @@
             }, 3000)
         }
     })
+
+    const deleteMoto = () => {
+        successMessage.value = 'Moto excluída com sucesso!'
+        fetchMotos()
+        setTimeout(() => {
+            successMessage.value = ''
+        }, 3000)
+    }
 </script>
 
 <template>
@@ -53,6 +61,7 @@
         <MotosTable 
             :headers="headers" 
             :motos="motos" 
+            @deleteMoto="deleteMoto"
         />
     </Layout>
 </template>

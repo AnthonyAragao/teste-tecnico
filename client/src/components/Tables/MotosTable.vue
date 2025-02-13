@@ -5,6 +5,7 @@
     import api from '@/services/axios.js'
 
     const { headers , motos } = defineProps(['headers', 'motos'])
+    const emit = defineEmits(['deleteMoto'])
     const isModalOpen = ref(false)
     const idToDelete = ref(null)
 
@@ -17,6 +18,7 @@
         try {
             await api.delete(`/motos/${idToDelete.value}`)
             isModalOpen.value = false
+            emit('deleteMoto', idToDelete.value)
         } catch (error) {
             console.error("Erro ao excluir moto:", error)
         }
