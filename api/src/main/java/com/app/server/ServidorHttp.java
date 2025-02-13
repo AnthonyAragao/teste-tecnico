@@ -7,18 +7,18 @@ import com.sun.net.httpserver.HttpServer;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 
-public class ServidorHttp 
-{
+public class ServidorHttp {
     private static final int PORTA = 8080;
 
     public static void main(String[] args) throws IOException {
         HttpServer server = HttpServer.create(new InetSocketAddress(PORTA), 0);
+
+        // Criando os controladores
         MotoController motoController = new MotoController();
         CarroController carroController = new CarroController();
 
-        // Adicionando os handlers para cada rota
-        server.createContext("/motos", new MotoHandler(motoController));
-        server.createContext("/carros", new CarroHandler(carroController));
+        server.createContext("/motos", new GenericHandler<>(motoController, com.app.model.Moto.class));
+        server.createContext("/carros", new GenericHandler<>(carroController, com.app.model.Carro.class));
 
         server.setExecutor(null);
         server.start();

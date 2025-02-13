@@ -53,7 +53,10 @@ public class GenericHandler<T> implements HttpHandler {
 
     private String handleGet(String path) throws IOException {
         if (isSingleEntityRequest(path)) {
-            int id = extractIdFromPath(path);
+            Integer id = extractIdFromPath(path);
+            if (id == null) {
+                return "ID inválido";
+            }
             T entity = controller.show(id);
             return entity != null 
                 ? objectMapper.writeValueAsString(entity) 
@@ -71,21 +74,34 @@ public class GenericHandler<T> implements HttpHandler {
     }
 
     private String handlePut(HttpExchange exchange, String path) throws IOException {
-        int id = extractIdFromPath(path);
+        Integer id = extractIdFromPath(path);
+        if (id == null) {
+            return "ID inválido";
+        }
         T updatedEntity = objectMapper.readValue(exchange.getRequestBody(), type);
         controller.update(id, updatedEntity);
         return type.getSimpleName() + " atualizado com sucesso!";
     }
 
     private String handleDelete(String path) throws IOException {
-        int id = extractIdFromPath(path);
+        Integer id = extractIdFromPath(path);
+        if (id == null) {
+            return "ID inválido";
+        }
         controller.delete(id);
         return type.getSimpleName() + " removido com sucesso!";
     }
 
-    private int extractIdFromPath(String path) {
+    private Integer extractIdFromPath(String path) {
         String[] partes = path.split("/");
-        return Integer.parseInt(partes[2]);
+        if (partes.length < 3) {
+            return null;
+        }
+        try {
+            return Integer.parseInt(partes[2]);
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 
     private boolean isSingleEntityRequest(String path) {
@@ -93,6 +109,16 @@ public class GenericHandler<T> implements HttpHandler {
     }
 
     private void sendResponse(HttpExchange exchange, String response, int statusCode) throws IOException {
+        exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
+        exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    
+        // Se for uma requisição OPTIONS (preflight), só devolvemos os cabeçalhos necessários
+        if ("OPTIONS".equalsIgnoreCase(exchange.getRequestMethod())) {
+            exchange.sendResponseHeaders(204, -1);
+            return;
+        }
+    
         exchange.sendResponseHeaders(statusCode, response.getBytes(StandardCharsets.UTF_8).length);
         try (OutputStream os = exchange.getResponseBody()) {
             os.write(response.getBytes(StandardCharsets.UTF_8));

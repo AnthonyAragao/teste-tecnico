@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Index from '../views/Index.vue'
-import MotosIndex from '../views/Motos/Index.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -13,7 +12,12 @@ const router = createRouter({
     {
       path: '/motos',
       name: 'motos',
-      component: MotosIndex,
+      component: () => import('../views/Motos/Index.vue'),
+    },
+    {
+      path: '/carros',
+      name: 'carros',
+      component: () => import('../views/Carros/Index.vue'),
     }
   ],
 })
