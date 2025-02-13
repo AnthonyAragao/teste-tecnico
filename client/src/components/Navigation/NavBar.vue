@@ -9,7 +9,7 @@
             </RouterLink>
 
             <RouterLink
-                to="/"
+                to="/carros"
                 class="font-semibold text-sm text-black uppercase"
              
             >

@@ -28,6 +28,16 @@ const router = createRouter({
       path: '/carros',
       name: 'carros',
       component: () => import('../views/Carros/Index.vue'),
+    },
+    {
+      path: '/carros/create',
+      name: 'carros-create',
+      component: () => import('../views/Carros/Form.vue'),
+    },
+    {
+      path: '/carros/:id/edit',
+      name: 'carros-edit',
+      component: () => import('../views/Carros/Form.vue'),
     }
   ],
 })

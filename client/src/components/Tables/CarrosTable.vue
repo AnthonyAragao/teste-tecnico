@@ -4,8 +4,8 @@
     import TableCell from '@/components/Tables/TableCell.vue'
     import api from '@/services/axios.js'
 
-    const { headers , motos } = defineProps(['headers', 'motos'])
-    const emit = defineEmits(['deleteMoto'])
+    const { headers , carros } = defineProps(['headers', 'carros'])
+    const emit = defineEmits(['deleteCarro'])
     const isModalOpen = ref(false)
     const idToDelete = ref(null)
 
@@ -16,11 +16,11 @@
 
     const handleConfirm = async () => {
         try {
-            await api.delete(`/motos/${idToDelete.value}`)
+            await api.delete(`/carros/${idToDelete.value}`)
             isModalOpen.value = false
-            emit('deleteMoto', idToDelete.value)
+            emit('deleteCarro', idToDelete.value)
         } catch (error) {
-            console.error("Erro ao excluir moto:", error)
+            console.error("Erro ao excluir Carro:", error)
         }
     }
 </script>
@@ -28,24 +28,25 @@
 <template>
     <TableTemplate :headers=headers>
         <tr
-            v-for="moto in motos"
-            :key="moto.id"
+            v-for="carro in carros"
+            :key="carro.id"
             class="border-b border-gray-200 hover:bg-gray-100"
         >
-            <TableCell isHeader="true">{{ moto.modelo }}</TableCell>
-            <TableCell>{{ moto.fabricante }}</TableCell>
-            <TableCell>{{ moto.ano }}</TableCell>
-            <TableCell>{{ moto.preco }}</TableCell>
-            <TableCell>{{ moto.cilindrada }}</TableCell>
+            <TableCell isHeader="true">{{ carro.modelo }}</TableCell>
+            <TableCell>{{ carro.fabricante }}</TableCell>
+            <TableCell>{{ carro.ano }}</TableCell>
+            <TableCell>{{ carro.preco }}</TableCell>
+            <TableCell>{{ carro.quantidadePortas }}</TableCell>
+            <TableCell>{{ carro.tipoCombustivel }}</TableCell>
             <TableCell customClass="space-x-2">
                 <RouterLink
-                    :to="`/motos/${moto.id}/edit`"
+                    :to="`/carros/${carro.id}/edit`"
                     class="bg-yellow-500 hover:bg-yellow-600 text-white text-xs font-bold py-1 px-2 rounded"
                 >
                     <i class="fas fa-edit"></i> Editar
                 </RouterLink>
                 <button 
-                    @click="handleDelete(moto.id)"
+                    @click="handleDelete(carro.id)"
                     class="bg-red-500 hover:bg-red-700 text-white text-xs font-bold py-1 px-2 rounded cursor-pointer"
                 >
                     <i class="fas fa-trash"></i> Excluir
@@ -55,7 +56,6 @@
     </TableTemplate>
 
 
-    <!-- Modal delete -->
     <div
         v-if="isModalOpen"
         class="fixed inset-0 bg-gray-700/50 bg-opacity-50 z-50 flex items-center justify-center"
