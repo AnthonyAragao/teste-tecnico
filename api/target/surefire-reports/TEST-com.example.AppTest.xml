@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.1" name="com.example.AppTest" time="0.05" tests="1" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.1" name="com.example.AppTest" time="0.07" tests="1" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="23"/>
     <property name="sun.cpu.isalist" value="amd64"/>
@@ -15,7 +15,7 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="BR"/>
     <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk-23\bin"/>
-    <property name="sun.java.command" value="C:\Users\Atos Santos\AppData\Local\Temp\surefire7454198246049466437\surefirebooter-20250212215949135_3.jar C:\Users\Atos Santos\AppData\Local\Temp\surefire7454198246049466437 2025-02-12T21-59-48_989-jvmRun1 surefire-20250212215949135_1tmp surefire_0-20250212215949135_2tmp"/>
+    <property name="sun.java.command" value="C:\Users\Atos Santos\AppData\Local\Temp\surefire10421284583956830726\surefirebooter-20250212220909587_3.jar C:\Users\Atos Santos\AppData\Local\Temp\surefire10421284583956830726 2025-02-12T22-09-09_425-jvmRun1 surefire-20250212220909587_1tmp surefire_0-20250212220909587_2tmp"/>
     <property name="jdk.debug" value="release"/>
     <property name="surefire.test.class.path" value="D:\dev\pessoais\teste-tecnico\api\target\test-classes;D:\dev\pessoais\teste-tecnico\api\target\classes;C:\Users\Atos Santos\.m2\repository\com\microsoft\sqlserver\mssql-jdbc\11.2.0.jre11\mssql-jdbc-11.2.0.jre11.jar;C:\Users\Atos Santos\.m2\repository\com\microsoft\azure\msal4j\1.13.0\msal4j-1.13.0.jar;C:\Users\Atos Santos\.m2\repository\com\nimbusds\oauth2-oidc-sdk\9.35\oauth2-oidc-sdk-9.35.jar;C:\Users\Atos Santos\.m2\repository\com\github\stephenc\jcip\jcip-annotations\1.0-1\jcip-annotations-1.0-1.jar;C:\Users\Atos Santos\.m2\repository\com\nimbusds\content-type\2.2\content-type-2.2.jar;C:\Users\Atos Santos\.m2\repository\com\nimbusds\lang-tag\1.6\lang-tag-1.6.jar;C:\Users\Atos Santos\.m2\repository\com\nimbusds\nimbus-jose-jwt\9.22\nimbus-jose-jwt-9.22.jar;C:\Users\Atos Santos\.m2\repository\net\minidev\json-smart\2.4.8\json-smart-2.4.8.jar;C:\Users\Atos Santos\.m2\repository\net\minidev\accessors-smart\2.4.8\accessors-smart-2.4.8.jar;C:\Users\Atos Santos\.m2\repository\org\ow2\asm\asm\9.1\asm-9.1.jar;C:\Users\Atos Santos\.m2\repository\org\slf4j\slf4j-api\1.7.36\slf4j-api-1.7.36.jar;C:\Users\Atos Santos\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.11.0\junit-jupiter-api-5.11.0.jar;C:\Users\Atos Santos\.m2\repository\org\opentest4j\opentest4j\1.3.0\opentest4j-1.3.0.jar;C:\Users\Atos Santos\.m2\repository\org\junit\platform\junit-platform-commons\1.11.0\junit-platform-commons-1.11.0.jar;C:\Users\Atos Santos\.m2\repository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar;C:\Users\Atos Santos\.m2\repository\org\junit\jupiter\junit-jupiter-params\5.11.0\junit-jupiter-params-5.11.0.jar;C:\Users\Atos Santos\.m2\repository\com\mysql\mysql-connector-j\8.0.33\mysql-connector-j-8.0.33.jar;C:\Users\Atos Santos\.m2\repository\com\google\protobuf\protobuf-java\3.21.9\protobuf-java-3.21.9.jar;C:\Users\Atos Santos\.m2\repository\com\fasterxml\jackson\core\jackson-databind\2.15.0\jackson-databind-2.15.0.jar;C:\Users\Atos Santos\.m2\repository\com\fasterxml\jackson\core\jackson-annotations\2.15.0\jackson-annotations-2.15.0.jar;C:\Users\Atos Santos\.m2\repository\com\fasterxml\jackson\core\jackson-core\2.15.0\jackson-core-2.15.0.jar;"/>
     <property name="sun.cpu.endian" value="little"/>
@@ -30,7 +30,7 @@
     <property name="line.separator" value="&#10;"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
-    <property name="surefire.real.class.path" value="C:\Users\Atos Santos\AppData\Local\Temp\surefire7454198246049466437\surefirebooter-20250212215949135_3.jar"/>
+    <property name="surefire.real.class.path" value="C:\Users\Atos Santos\AppData\Local\Temp\surefire10421284583956830726\surefirebooter-20250212220909587_3.jar"/>
     <property name="user.script" value=""/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="java.runtime.version" value="23.0.2+7-58"/>
@@ -58,5 +58,5 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="67.0"/>
   </properties>
-  <testcase name="shouldAnswerWithTrue" classname="com.example.AppTest" time="0.022"/>
+  <testcase name="shouldAnswerWithTrue" classname="com.example.AppTest" time="0.036"/>
 </testsuite>

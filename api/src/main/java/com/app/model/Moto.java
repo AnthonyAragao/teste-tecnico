@@ -1,15 +1,24 @@
 package com.app.model;
 
 public class Moto extends Veiculo {
+    private Integer id;
     private int cilindrada;
 
     public Moto() {
         super();
     }
 
-    public Moto(int id, String tipo, String modelo, String fabricante, int ano, double preco, int cilindrada) {
-        super(id, tipo, modelo, fabricante, ano, preco);
+    public Moto(int id, String tipo, String modelo, String fabricante, int ano, double preco, int cilindrada, Integer veiculoId) {
+        super(veiculoId, tipo, modelo, fabricante, ano, preco);
+        if (cilindrada <= 0) {
+            throw new IllegalArgumentException("A cilindrada deve ser maior que zero.");
+        }
+        this.id = id;
         this.cilindrada = cilindrada;
+    }
+
+    public Integer getId() {
+        return id;
     }
 
     public int getCilindrada() {

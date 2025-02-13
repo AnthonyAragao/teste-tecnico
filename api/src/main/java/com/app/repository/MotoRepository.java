@@ -126,7 +126,7 @@ public class MotoRepository implements IMotoRepository {
                 veiculoStmt.setString(2, moto.getFabricante());
                 veiculoStmt.setInt(3, moto.getAno());
                 veiculoStmt.setDouble(4, moto.getPreco());
-                veiculoStmt.setInt(5, moto.getId());
+                veiculoStmt.setInt(5, moto.getVeiculoId());
                 veiculoStmt.executeUpdate();
 
                 motoStmt.setInt(1, moto.getCilindrada());
@@ -186,13 +186,14 @@ public class MotoRepository implements IMotoRepository {
 
     private Moto mapResultSetToMoto(ResultSet resultSet) throws SQLException {
         return new Moto(
-            resultSet.getInt("veiculo_id"),
+            resultSet.getInt("motos.id"),
             resultSet.getString("tipo"),
             resultSet.getString("modelo"),
             resultSet.getString("fabricante"),
             resultSet.getInt("ano"),
             resultSet.getDouble("preco"),
-            resultSet.getInt("cilindrada")
+            resultSet.getInt("cilindrada"),
+            resultSet.getInt("veiculo_id")
         );
     }
 }

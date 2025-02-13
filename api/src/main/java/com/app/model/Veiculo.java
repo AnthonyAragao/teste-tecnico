@@ -1,7 +1,7 @@
 package com.app.model;
 
 public abstract class Veiculo {
-    private Integer id;
+    private Integer veiculoId;
     private String tipo;
     private String modelo;
     private String fabricante;
@@ -10,8 +10,8 @@ public abstract class Veiculo {
 
     public Veiculo() {}
 
-    public Veiculo(int id, String tipo, String modelo,  String fabricante, int ano, double preco){
-        this.id = id;
+    public Veiculo(int veiculoId, String tipo, String modelo,  String fabricante, int ano, double preco){
+        this.veiculoId = veiculoId;
         this.tipo = tipo;
         this.modelo = modelo;
         this.fabricante = fabricante;
@@ -19,8 +19,8 @@ public abstract class Veiculo {
         this.preco = preco;
     }
 
-    public Integer getId() {
-        return id;
+    public Integer getVeiculoId() {
+        return veiculoId;
     }
 
     public String getTipo() {
@@ -43,8 +43,8 @@ public abstract class Veiculo {
         return preco;
     }
 
-    public void setId(Integer id) { 
-        this.id = id; 
+    public void setVeiculoId(Integer veiculoId) { 
+        this.veiculoId = veiculoId; 
     }
 
     public void setModelo(String modelo) {

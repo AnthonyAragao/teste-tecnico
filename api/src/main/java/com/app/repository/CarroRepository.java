@@ -129,7 +129,7 @@ public class CarroRepository implements ICarroRepository {
                 veiculoStmt.setString(2, carro.getFabricante());
                 veiculoStmt.setInt(3, carro.getAno());
                 veiculoStmt.setDouble(4, carro.getPreco());
-                veiculoStmt.setInt(5, carro.getId());
+                veiculoStmt.setInt(5, carro.getVeiculoId());
                 veiculoStmt.executeUpdate();
 
                 // Atualizando carro
@@ -191,14 +191,15 @@ public class CarroRepository implements ICarroRepository {
 
     private Carro mapResultSetToCarro(ResultSet resultSet) throws SQLException {
         return new Carro(
-            resultSet.getInt("veiculo_id"),
+            resultSet.getInt("carros.id"),
             resultSet.getString("tipo"),
             resultSet.getString("modelo"),
             resultSet.getString("fabricante"),
             resultSet.getInt("ano"),
             resultSet.getDouble("preco"),
             resultSet.getInt("quantidade_portas"),
-            TipoCombustivel.valueOf(resultSet.getString("tipo_combustivel").toUpperCase())
+            TipoCombustivel.valueOf(resultSet.getString("tipo_combustivel").toUpperCase()),
+            resultSet.getInt("veiculo_id")
         );
     }
 }
