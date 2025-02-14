@@ -11,6 +11,8 @@ D:\dev\pessoais\teste-tecnico\api\src\main\java\com\app\repository\CarroReposito
 D:\dev\pessoais\teste-tecnico\api\src\main\java\com\app\repository\interfaces\ICarroRepository.java
 D:\dev\pessoais\teste-tecnico\api\src\main\java\com\app\repository\interfaces\IMotoRepository.java
 D:\dev\pessoais\teste-tecnico\api\src\main\java\com\app\repository\MotoRepository.java
+D:\dev\pessoais\teste-tecnico\api\src\main\java\com\app\request\CarroRequest.java
+D:\dev\pessoais\teste-tecnico\api\src\main\java\com\app\request\MotoRequest.java
 D:\dev\pessoais\teste-tecnico\api\src\main\java\com\app\server\GenericHandler.java
 D:\dev\pessoais\teste-tecnico\api\src\main\java\com\app\server\ServidorHttp.java
 D:\dev\pessoais\teste-tecnico\api\src\main\java\com\app\service\CarroService.java

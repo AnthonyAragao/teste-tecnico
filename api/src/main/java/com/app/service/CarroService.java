@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.app.model.Carro;
 import com.app.repository.interfaces.ICarroRepository;
+import com.app.request.CarroRequest;
 
 public class CarroService {
     private final ICarroRepository repository;
@@ -21,6 +22,7 @@ public class CarroService {
     }
 
     public void insert(Carro carro) {
+        CarroRequest.validar(carro);
         repository.insert(carro);
     }
 
@@ -29,6 +31,7 @@ public class CarroService {
         if (carroExistente == null) {
             throw new RuntimeException("Carro não encontrado");
         }
+        CarroRequest.validar(carroAtualizado);
         Carro carroParaAtualizar = mergeCarro(carroExistente, carroAtualizado);
         repository.update(carroParaAtualizar);
     }

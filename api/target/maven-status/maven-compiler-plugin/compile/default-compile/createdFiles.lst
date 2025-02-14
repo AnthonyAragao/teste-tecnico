@@ -1,9 +1,11 @@
 com\app\model\Carro.class
 com\app\controller\MotoController.class
 com\app\service\MotoService.class
+com\app\request\MotoRequest.class
 com\app\controller\GenericController.class
 com\app\model\Moto.class
 com\app\model\Veiculo.class
+com\app\request\CarroRequest.class
 com\app\config\DatabaseConfig.class
 com\app\repository\interfaces\IMotoRepository.class
 com\app\repository\CarroRepository.class

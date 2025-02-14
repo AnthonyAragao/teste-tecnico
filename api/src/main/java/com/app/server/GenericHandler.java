@@ -40,10 +40,10 @@ public class GenericHandler<T> implements HttpHandler {
         String path = exchange.getRequestURI().getPath();
 
         return switch (method) {
-            case "GET" -> handleGet(path);
+            case "GET" -> handleGet(exchange, path);
             case "POST" -> handlePost(exchange);
             case "PUT" -> handlePut(exchange, path);
-            case "DELETE" -> handleDelete(path);
+            case "DELETE" -> handleDelete(exchange, path);
             default -> {
                 sendResponse(exchange, METHOD_NOT_ALLOWED, 405);
                 yield METHOD_NOT_ALLOWED;
@@ -51,54 +51,86 @@ public class GenericHandler<T> implements HttpHandler {
         };
     }
 
-    private String handleGet(String path) throws IOException {
+    private String handleGet(HttpExchange exchange, String path) throws IOException {
         if (isSingleEntityRequest(path)) {
             Integer id = extractIdFromPath(path);
             if (id == null) {
+                sendResponse(exchange, "ID inválido", 400);
                 return "ID inválido";
             }
             T entity = controller.show(id);
-            return entity != null 
-                ? objectMapper.writeValueAsString(entity) 
-                : type.getSimpleName() + " não encontrado";
+            if (entity != null) {
+                String response = objectMapper.writeValueAsString(entity);
+                sendResponse(exchange, response, 200);
+                return response;
+            } else {
+                sendResponse(exchange, type.getSimpleName() + " não encontrado", 404);
+                return type.getSimpleName() + " não encontrado";
+            }
         }
 
         List<T> entities = controller.index();
-        return objectMapper.writeValueAsString(entities);
+        String response = objectMapper.writeValueAsString(entities);
+        sendResponse(exchange, response, 200);
+        return response;
     }
 
     private String handlePost(HttpExchange exchange) throws IOException {
         try {
-            T newEntity = objectMapper.readValue(exchange.getRequestBody(), type);
+            String requestBody = new String(exchange.getRequestBody().readAllBytes());
+            System.out.println("JSON recebido: " + requestBody);
+        
+            // Converte para o objeto esperado
+            T newEntity = objectMapper.readValue(requestBody, type);
+
+            // Envia para o controller
             controller.create(newEntity);
+            sendResponse(exchange, type.getSimpleName() + " criado com sucesso!", 201);
             return type.getSimpleName() + " criado com sucesso!";
-        } catch (IllegalArgumentException e) { // Erro de validação
+        } catch (IllegalArgumentException e) {
+            System.err.println("Erro de validação: " + e.getMessage());
             sendResponse(exchange, e.getMessage(), 400);
             return e.getMessage();
         } catch (Exception e) {
+            e.printStackTrace(); 
             sendResponse(exchange, "Erro ao criar " + type.getSimpleName(), 500);
             return "Erro ao criar " + type.getSimpleName();
         }
     }
 
     private String handlePut(HttpExchange exchange, String path) throws IOException {
-        Integer id = extractIdFromPath(path);
-        if (id == null) {
-            return "ID inválido";
+        try {
+            Integer id = extractIdFromPath(path);
+            if (id == null) {
+                return "ID inválido";
+            }
+            T updatedEntity = objectMapper.readValue(exchange.getRequestBody(), type);
+            controller.update(id, updatedEntity);
+            return type.getSimpleName() + " atualizado com sucesso!";
+            
+        } catch (IllegalArgumentException e) { 
+            System.err.println("Erro de validação: " + e.getMessage());
+            sendResponse(exchange, e.getMessage(), 400);
+            return e.getMessage();
+        } catch (Exception e) { 
+            e.printStackTrace();
+            String errorMessage = "Erro ao atualizar " + type.getSimpleName() + ": " + e.getMessage();
+            sendResponse(exchange, errorMessage, 500);
+            return errorMessage;
         }
-        T updatedEntity = objectMapper.readValue(exchange.getRequestBody(), type);
-        controller.update(id, updatedEntity);
-        return type.getSimpleName() + " atualizado com sucesso!";
     }
 
-    private String handleDelete(String path) throws IOException {
+    private String handleDelete(HttpExchange exchange, String path) throws IOException {
         Integer id = extractIdFromPath(path);
         if (id == null) {
+            sendResponse(exchange, "ID inválido", 400);
             return "ID inválido";
         }
         controller.delete(id);
+        sendResponse(exchange, type.getSimpleName() + " removido com sucesso!", 204);
         return type.getSimpleName() + " removido com sucesso!";
     }
+    
 
     private Integer extractIdFromPath(String path) {
         String[] partes = path.split("/");

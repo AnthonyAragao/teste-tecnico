@@ -3,6 +3,8 @@ package com.app.service;
 import java.util.List;
 import com.app.model.Moto;
 import com.app.repository.interfaces.IMotoRepository;
+import com.app.request.MotoRequest;
+
 
 public class MotoService {
     private final IMotoRepository repository;
@@ -20,6 +22,7 @@ public class MotoService {
     }
 
     public void insert(Moto moto) {
+        MotoRequest.validar(moto);
         repository.insert(moto);
     }
 
@@ -28,6 +31,7 @@ public class MotoService {
         if (motoExistente == null) {
             throw new RuntimeException("Moto não encontrada");
         }
+        MotoRequest.validar(motoAtualizada);
         Moto motoParaAtualizar = mergeMoto(motoExistente, motoAtualizada);
         repository.update(motoParaAtualizar);
     }
