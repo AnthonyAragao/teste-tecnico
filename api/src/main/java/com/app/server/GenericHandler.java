@@ -10,17 +10,14 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class GenericHandler<T> implements HttpHandler {
-    private static final String METHOD_NOT_ALLOWED = "Método não permitido";
-    private static final String INTERNAL_ERROR = "Erro interno: ";
-
     private final GenericController<T> controller;
     private final ObjectMapper objectMapper;
     private final Class<T> type;
 
     public GenericHandler(GenericController<T> controller, Class<T> type) {
         this.controller = controller;
-        this.objectMapper = new ObjectMapper();
         this.type = type;
+        this.objectMapper = new ObjectMapper();
     }
 
     @Override
@@ -30,14 +27,13 @@ public class GenericHandler<T> implements HttpHandler {
             sendResponse(exchange, response, 200);
         } catch (Exception exception) {
             exception.printStackTrace();
-            String errorMessage = INTERNAL_ERROR + exception.getMessage();
-            sendResponse(exchange, errorMessage, 500);
+            sendResponse(exchange, exception.getMessage(), 500);
         }
     }
 
     private String processRequest(HttpExchange exchange) throws IOException {
         String method = exchange.getRequestMethod();
-        String path = exchange.getRequestURI().getPath();
+        String path   = exchange.getRequestURI().getPath();
 
         return switch (method) {
             case "GET" -> handleGet(exchange, path);
@@ -45,6 +41,7 @@ public class GenericHandler<T> implements HttpHandler {
             case "PUT" -> handlePut(exchange, path);
             case "DELETE" -> handleDelete(exchange, path);
             default -> {
+                String METHOD_NOT_ALLOWED = "Método não permitido";
                 sendResponse(exchange, METHOD_NOT_ALLOWED, 405);
                 yield METHOD_NOT_ALLOWED;
             }
@@ -59,14 +56,15 @@ public class GenericHandler<T> implements HttpHandler {
                 return "ID inválido";
             }
             T entity = controller.show(id);
-            if (entity != null) {
-                String response = objectMapper.writeValueAsString(entity);
-                sendResponse(exchange, response, 200);
-                return response;
-            } else {
+
+            if (entity == null) {
                 sendResponse(exchange, type.getSimpleName() + " não encontrado", 404);
                 return type.getSimpleName() + " não encontrado";
-            }
+            } 
+
+            String response = objectMapper.writeValueAsString(entity);
+            sendResponse(exchange, response, 200);
+            return response;
         }
 
         List<T> entities = controller.index();
@@ -78,21 +76,21 @@ public class GenericHandler<T> implements HttpHandler {
     private String handlePost(HttpExchange exchange) throws IOException {
         try {
             String requestBody = new String(exchange.getRequestBody().readAllBytes());
-            System.out.println("JSON recebido: " + requestBody);
         
             // Converte para o objeto esperado
             T newEntity = objectMapper.readValue(requestBody, type);
 
             // Envia para o controller
             controller.create(newEntity);
+            
             sendResponse(exchange, type.getSimpleName() + " criado com sucesso!", 201);
             return type.getSimpleName() + " criado com sucesso!";
-        } catch (IllegalArgumentException e) {
-            System.err.println("Erro de validação: " + e.getMessage());
-            sendResponse(exchange, e.getMessage(), 400);
-            return e.getMessage();
-        } catch (Exception e) {
-            e.printStackTrace(); 
+        } catch (IllegalArgumentException exception) {
+            System.err.println("Erro de validação: " + exception.getMessage());
+            sendResponse(exchange, exception.getMessage(), 400);
+            return exception.getMessage();
+        } catch (Exception exception) {
+            exception.printStackTrace(); 
             sendResponse(exchange, "Erro ao criar " + type.getSimpleName(), 500);
             return "Erro ao criar " + type.getSimpleName();
         }
@@ -102,19 +100,19 @@ public class GenericHandler<T> implements HttpHandler {
         try {
             Integer id = extractIdFromPath(path);
             if (id == null) {
+                sendResponse(exchange, "ID inválido", 400);
                 return "ID inválido";
             }
             T updatedEntity = objectMapper.readValue(exchange.getRequestBody(), type);
             controller.update(id, updatedEntity);
             return type.getSimpleName() + " atualizado com sucesso!";
-            
-        } catch (IllegalArgumentException e) { 
-            System.err.println("Erro de validação: " + e.getMessage());
-            sendResponse(exchange, e.getMessage(), 400);
-            return e.getMessage();
-        } catch (Exception e) { 
-            e.printStackTrace();
-            String errorMessage = "Erro ao atualizar " + type.getSimpleName() + ": " + e.getMessage();
+        } catch (IllegalArgumentException exception) { 
+            System.err.println("Erro de validação: " + exception.getMessage());
+            sendResponse(exchange, exception.getMessage(), 400);
+            return exception.getMessage();
+        } catch (Exception exception) { 
+            exception.printStackTrace();
+            String errorMessage = "Erro ao atualizar " + type.getSimpleName() + ": " + exception.getMessage();
             sendResponse(exchange, errorMessage, 500);
             return errorMessage;
         }
@@ -152,12 +150,6 @@ public class GenericHandler<T> implements HttpHandler {
         exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
         exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
         exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type, Authorization");
-    
-        // Se for uma requisição OPTIONS (preflight), só devolvemos os cabeçalhos necessários
-        if ("OPTIONS".equalsIgnoreCase(exchange.getRequestMethod())) {
-            exchange.sendResponseHeaders(204, -1);
-            return;
-        }
     
         exchange.sendResponseHeaders(statusCode, response.getBytes(StandardCharsets.UTF_8).length);
         try (OutputStream os = exchange.getResponseBody()) {
