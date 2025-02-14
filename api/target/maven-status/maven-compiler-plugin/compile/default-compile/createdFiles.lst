@@ -10,7 +10,6 @@ com\app\config\DatabaseConfig.class
 com\app\repository\interfaces\IMotoRepository.class
 com\app\repository\CarroRepository.class
 com\app\server\ServidorHttp.class
-com\app\App.class
 com\app\repository\MotoRepository.class
 com\app\model\TipoCombustivel.class
 com\app\service\CarroService.class

@@ -28,5 +28,8 @@ public class MotoRequest {
         if(moto.getCilindrada() == 0) {
             throw new IllegalArgumentException("A cilindrada da moto é obrigatória.");
         }
+        if(moto.getCilindrada() < 50) {
+            throw new IllegalArgumentException("A cilindrada da moto deve ser maior que 50.");
+        }
     }
 }

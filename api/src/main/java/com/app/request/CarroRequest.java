@@ -25,11 +25,12 @@ public class CarroRequest {
         if (carro.getPreco() == 0) {
             throw new IllegalArgumentException("O preço do carro é obrigatório.");
         }
-     
         if (carro.getQuantidadePortas() == 0) {
             throw new IllegalArgumentException("A quantidade de portas do carro é obrigatória.");
         }
-
+        if (carro.getQuantidadePortas() < 2 || carro.getQuantidadePortas() > 5) {
+            throw new IllegalArgumentException("A quantidade de portas do carro deve ser entre 2 e 5.");
+        }
         if (carro.getTipoCombustivel() == null) {
             throw new IllegalArgumentException("O tipo de combustível do carro é obrigatório.");
         }

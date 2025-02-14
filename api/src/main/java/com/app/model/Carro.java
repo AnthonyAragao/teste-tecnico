@@ -11,9 +11,6 @@ public class Carro extends Veiculo {
 
     public Carro(int id, String tipo, String modelo, String fabricante, int ano,  double preco, int quantidadePortas, TipoCombustivel tipoCombustivel, Integer veiculoId) {
         super(veiculoId, tipo, modelo, fabricante, ano, preco);
-        if (quantidadePortas <= 0) {
-            throw new IllegalArgumentException("O número de portas deve ser maior que zero.");
-        }
         this.id = id;
         this.quantidadePortas = quantidadePortas;
         this.tipoCombustivel = tipoCombustivel;

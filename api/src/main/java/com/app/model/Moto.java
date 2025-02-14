@@ -10,9 +10,6 @@ public class Moto extends Veiculo {
 
     public Moto(int id, String tipo, String modelo, String fabricante, int ano, double preco, int cilindrada, Integer veiculoId) {
         super(veiculoId, tipo, modelo, fabricante, ano, preco);
-        if (cilindrada <= 0) {
-            throw new IllegalArgumentException("A cilindrada deve ser maior que zero.");
-        }
         this.id = id;
         this.cilindrada = cilindrada;
     }
